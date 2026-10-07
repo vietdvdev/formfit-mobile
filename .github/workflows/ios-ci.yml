@@ -1,0 +1,204 @@
+name: iOS CI Pipeline
+
+# 1. Triggers: Kích hoạt khi có PR trỏ vào main / develop hoặc push vào main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+
+# 2. Concurrency: Tự động hủy build cũ nếu nhánh nhận commit mới trong cùng PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Thiết lập quyền tối thiểu cần thiết cho workflow
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  # =========================================================================
+  # JOB 1: LINTING & CODE QUALITY (Fail-fast trước khi build)
+  # =========================================================================
+  lint-and-validate:
+    name: Lint & Code Quality
+    runs-on: macos-14
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode 15.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
+
+      - name: Install SwiftLint
+        run: |
+          if ! command -v swiftlint &> /dev/null; then
+            echo "Installing SwiftLint via Homebrew..."
+            brew install swiftlint
+          fi
+          swiftlint version
+
+      - name: Run SwiftLint (Strict Mode)
+        run: |
+          echo "Bắt đầu kiểm tra cú pháp và quy chuẩn code..."
+          swiftlint lint --strict --reporter github-actions-logging
+
+  # =========================================================================
+  # JOB 2: AUTOMATED TESTING (Unit Tests & UI Tests)
+  # =========================================================================
+  test-suite:
+    name: Run Test Suite & Coverage
+    needs: lint-and-validate
+    runs-on: macos-14
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode 15.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
+
+      # Caching SPM Dependencies
+      - name: Cache Swift Package Manager (SPM)
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/*.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      # Caching DerivedData
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
+
+      - name: Install xcbeautify
+        run: |
+          brew install xcbeautify
+
+      - name: Boot iOS Simulator
+        run: |
+          echo "Tìm và khởi động iOS Simulator iPhone 15 Pro..."
+          SIM_UDID=$(xcrun simctl list devices 'iPhone 15 Pro' | grep -m 1 -E -o '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}')
+          if [ -n "$SIM_UDID" ]; then
+            echo "Booting simulator: $SIM_UDID"
+            xcrun simctl boot "$SIM_UDID" || true
+          else
+            echo "Simulator iPhone 15 Pro chưa sẵn sàng, sử dụng default destination."
+          fi
+
+      - name: Run Unit & UI Tests
+        id: run_tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -scheme FormFit \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro,OS=latest" \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData | xcbeautify
+
+      - name: Extract Code Coverage Summary
+        if: always()
+        run: |
+          if [ -d "TestResults.xcresult" ]; then
+            echo "Trích xuất thống kê Code Coverage từ TestResults.xcresult..."
+            xcrun xccov view --report --only-targets TestResults.xcresult > coverage_report.txt || true
+            cat coverage_report.txt | head -n 30 || true
+          fi
+
+      - name: Upload Test Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults-xcresult
+          path: TestResults.xcresult
+          retention-days: 7
+
+      - name: Comment Test Coverage on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let coverageBody = "### 📊 Kết Quả Kiểm Thử FormFit CI\n\n";
+            if (fs.existsSync('coverage_report.txt')) {
+              const report = fs.readFileSync('coverage_report.txt', 'utf8');
+              coverageBody += "```\n" + report.substring(0, 2000) + "\n```";
+            } else {
+              coverageBody += "✅ Tất cả các bài kiểm thử đã hoàn thành thành công!";
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: coverageBody
+            });
+
+  # =========================================================================
+  # JOB 3: BUILD VERIFICATION (Debug & Release generic arm64)
+  # =========================================================================
+  build-check:
+    name: Build Verification (arm64)
+    needs: lint-and-validate
+    runs-on: macos-14
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode 15.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
+
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      # Caching DerivedData
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-build-${{ hashFiles('**/*.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-build-
+
+      - name: Clean Build - Debug Configuration
+        run: |
+          set -o pipefail
+          xcodebuild clean build \
+            -scheme FormFit \
+            -configuration Debug \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData | xcbeautify
+
+      - name: Build Verification - Release Configuration
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -scheme FormFit \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData | xcbeautify

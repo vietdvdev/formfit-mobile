@@ -1,0 +1,109 @@
+{
+  "appPolicies" : {
+    "eap" : null,
+    "fbs" : null
+  },
+  "identifier" : "FormFitStoreKitConfig",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "vi_VN",
+    "_storefront" : "VNM",
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "FormFitProGroup",
+      "localizations" : [
+        {
+          "description" : "Mở khóa toàn bộ tính năng FormFit Pro",
+          "displayName" : "FormFit Pro Subscription",
+          "locale" : "vi_VN"
+        }
+      ],
+      "name" : "FormFitProGroup",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "monthly_sub_01",
+          "introductoryOffer" : {
+            "internalID" : "monthly_free_trial_01",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Truy cập không giới hạn mô hình 3D và giáo án (Dùng thử 7 ngày)",
+              "displayName" : "FormFit Pro Gói Tháng",
+              "locale" : "vi_VN"
+            },
+            {
+              "description" : "Unlimited 3D models and customized routines (7-day trial)",
+              "displayName" : "FormFit Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.formfit.subscription.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "FormFit Pro Monthly",
+          "subscriptionGroupID" : "FormFitProGroup",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "79.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "annual_sub_01",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Tiết kiệm 33% chi phí cả năm với toàn bộ đặc quyền Pro",
+              "displayName" : "FormFit Pro Gói Năm",
+              "locale" : "vi_VN"
+            },
+            {
+              "description" : "Save 33% annually with all Pro privileges",
+              "displayName" : "FormFit Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.formfit.subscription.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "FormFit Pro Annual",
+          "subscriptionGroupID" : "FormFitProGroup",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

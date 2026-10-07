@@ -1,0 +1,78 @@
+# Cấu hình SwiftLint cho dự án FormFit (SwiftUI, SwiftData, Swift Concurrency, iOS 17+)
+
+# 1. Các thư mục và file được phân tích
+included:
+  - FormFit
+  - FormFitTests
+  - FormFitUITests
+
+# 2. Các thư mục bị loại trừ (bỏ qua Pods, SPM caches, Generated files)
+excluded:
+  - .build
+  - DerivedData
+  - backend
+  - Pods
+  - Carthage
+
+# 3. Danh sách các quy tắc bật / tắt
+disabled_rules:
+  - trailing_whitespace
+  - todo
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - overridden_super_call
+  - redundant_nil_coalescing
+  - unneeded_parentheses_in_closure_argument
+  - vertical_whitespace_closing_braces
+
+# 4. Giới hạn độ dài dòng code
+line_length:
+  warning: 140
+  error: 180
+  ignores_comments: true
+  ignores_urls: true
+  ignores_interpolated_strings: true
+
+# 5. Giới hạn độ dài File và Type
+file_length:
+  warning: 600
+  error: 1000
+  ignore_comment_only_lines: true
+
+type_body_length:
+  warning: 400
+  error: 600
+
+function_body_length:
+  warning: 80
+  error: 150
+
+# 6. Quy chuẩn đặt tên định danh (Identifier Name)
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 50
+    error: 70
+  excluded:
+    - id
+    - x
+    - y
+    - z
+    - w
+    - h
+    - to
+    - vm
+    - pt
+    - kg
+
+# 7. Cảnh báo ép kiểu bắt buộc (Force cast)
+force_cast: error
+force_try: error
