@@ -9,7 +9,7 @@ options:
 
 settings:
   base:
-    SWIFT_VERSION: "5.9"
+    SWIFT_VERSION: "5.10"
     DEVELOPMENT_TEAM: ""
     ENABLE_PREVIEWS: YES
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
@@ -23,7 +23,6 @@ targets:
       - path: FormFit
         excludes:
           - "Core/LiveActivities/RestTimerLiveActivity.swift"
-          - "Core/LiveActivities/RestTimerActivityWidget.swift"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.formfit.app
@@ -56,7 +55,6 @@ targets:
       - path: FormFit/Core/LiveActivities/RestTimerActivityAttributes.swift
       - path: FormFit/Core/LiveActivities/RestTimerIntents.swift
       - path: FormFit/Core/LiveActivities/RestTimerLiveActivity.swift
-      - path: FormFit/Core/LiveActivities/RestTimerActivityWidget.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.formfit.app.widgets

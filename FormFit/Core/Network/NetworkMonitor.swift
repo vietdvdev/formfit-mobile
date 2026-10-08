@@ -43,7 +43,7 @@ public final class NetworkMonitor {
         monitor.start(queue: monitorQueue)
     }
 
-    deinit {
+    nonisolated deinit {
         monitor.cancel()
     }
 }

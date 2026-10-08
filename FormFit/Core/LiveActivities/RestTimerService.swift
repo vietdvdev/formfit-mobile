@@ -174,14 +174,16 @@ public final class RestTimerService {
     private func startOrUpdateLiveActivity() {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
-        let attributes = RestTimerActivityAttributes(workoutTitle: "FormFit Active Workout")
-        let contentState = RestTimerActivityAttributes.ContentState(
-            remainingSeconds: remainingSeconds,
-            totalDurationSeconds: totalDurationSeconds,
-            endTime: endTime,
+        let attributes = RestTimerActivityAttributes(
             exerciseName: currentExerciseName,
-            currentSetNumber: currentSetNumber,
-            nextSetNumber: nextSetNumber
+            nextSetNumber: nextSetNumber,
+            targetReps: 10,
+            targetWeightKg: 0.0
+        )
+        let contentState = RestTimerActivityAttributes.ContentState(
+            endTime: endTime,
+            totalRestDuration: TimeInterval(totalDurationSeconds),
+            isPaused: false
         )
 
         let activityContent = ActivityContent(state: contentState, staleDate: endTime.addingTimeInterval(10))
@@ -206,12 +208,9 @@ public final class RestTimerService {
     private func updateLiveActivityContent() {
         guard let activity = currentActivity else { return }
         let contentState = RestTimerActivityAttributes.ContentState(
-            remainingSeconds: remainingSeconds,
-            totalDurationSeconds: totalDurationSeconds,
             endTime: endTime,
-            exerciseName: currentExerciseName,
-            currentSetNumber: currentSetNumber,
-            nextSetNumber: nextSetNumber
+            totalRestDuration: TimeInterval(totalDurationSeconds),
+            isPaused: false
         )
 
         Task {
@@ -223,12 +222,9 @@ public final class RestTimerService {
         guard let activity = currentActivity else { return }
         Task {
             let finalState = RestTimerActivityAttributes.ContentState(
-                remainingSeconds: 0,
-                totalDurationSeconds: totalDurationSeconds,
                 endTime: Date(),
-                exerciseName: currentExerciseName,
-                currentSetNumber: currentSetNumber,
-                nextSetNumber: nextSetNumber
+                totalRestDuration: TimeInterval(totalDurationSeconds),
+                isPaused: false
             )
             await activity.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
             self.currentActivity = nil

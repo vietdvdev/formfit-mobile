@@ -22,7 +22,7 @@ public struct AssetVerificationInfo: Sendable {
 
 /// Actor quản lý việc kiểm tra, tải ngầm và cache các file 3D (.usdz / .glb) theo cơ chế On-Demand Streaming.
 /// Đảm bảo thread-safe hoàn toàn với Swift Concurrency, không gây nghẽn Main Thread.
-public actor AssetDownloadManager: NSObject {
+public actor AssetDownloadManager {
     
     // MARK: - Singleton
     public static let shared = AssetDownloadManager()
@@ -56,7 +56,7 @@ public actor AssetDownloadManager: NSObject {
         config.waitsForConnectivity = true
         self.sessionConfiguration = config
 
-        super.init()
+
 
         createModelsDirectoryIfNeeded()
     }

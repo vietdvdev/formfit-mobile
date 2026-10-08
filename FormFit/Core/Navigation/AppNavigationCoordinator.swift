@@ -91,10 +91,10 @@ public final class AppNavigationCoordinator {
 
     private func startTimer() {
         workoutTimerTask?.cancel()
-        workoutTimerTask = Task { [weak self] in
-            while true {
+        workoutTimerTask = Task {
+            while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
-                guard let self = self, !Task.isCancelled else { break }
+                guard !Task.isCancelled else { break }
                 self.activeWorkoutDurationSeconds += 1
             }
         }
