@@ -28,8 +28,21 @@ public struct FormFitApp: App {
                 isStoredInMemoryOnly: false
             )
             self.sharedModelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            print("[FormFitApp] ✅ SwiftData ModelContainer đã khởi tạo thành công.")
         } catch {
-            fatalError("[FormFitApp] ❌ Không thể khởi tạo SwiftData ModelContainer: \(error.localizedDescription)")
+            print("[FormFitApp] ⚠️ Persistent ModelContainer lỗi: \(error.localizedDescription). Đang chuyển sang In-Memory Container...")
+            do {
+                let schema = Schema([
+                    WorkoutSession.self,
+                    WorkoutExercise.self,
+                    SetEntry.self
+                ])
+                let inMemoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                self.sharedModelContainer = try ModelContainer(for: schema, configurations: [inMemoryConfig])
+                print("[FormFitApp] ✅ Fallback sang In-Memory ModelContainer thành công.")
+            } catch {
+                fatalError("[FormFitApp] ❌ Không thể khởi tạo SwiftData: \(error.localizedDescription)")
+            }
         }
     }
 
