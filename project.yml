@@ -9,7 +9,7 @@ options:
 
 settings:
   base:
-    SWIFT_VERSION: "5.10"
+    SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: ""
     ENABLE_PREVIEWS: YES
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
