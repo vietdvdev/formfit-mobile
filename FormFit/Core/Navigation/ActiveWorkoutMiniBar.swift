@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Thanh Mini-Player Bar nổi phía trên TabBar hiển thị trạng thái buổi tập đang diễn ra
-/// Cho phép người dùng chạm để mở lại toàn màn hình `ActiveWorkoutView`
+/// Được nâng cấp giao diện Glassmorphism cao cấp, viền Neon phát sáng nhịp tim và nút mở rộng mượt mà
 public struct ActiveWorkoutMiniBar: View {
     public let session: WorkoutSession?
     public let durationSeconds: Int
@@ -37,18 +37,18 @@ public struct ActiveWorkoutMiniBar: View {
 
     public var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 12) {
-                // Biểu tượng nhịp tập & vòng tròn loading nhịp nhàng
+            HStack(spacing: 14) {
+                // Biểu tượng tạ với viền Neon Gradient
                 ZStack {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [.blue, .cyan],
+                                colors: [FFDesign.Colors.primaryNeon, FFDesign.Colors.electricBlue],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 42, height: 42)
+                        .frame(width: 44, height: 44)
 
                     Image(systemName: "figure.strengthtraining.traditional")
                         .font(.body.bold())
@@ -56,13 +56,13 @@ public struct ActiveWorkoutMiniBar: View {
                 }
 
                 // Thông tin tiến trình buổi tập
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(currentExerciseInfo.name)
                         .font(.subheadline.bold())
                         .foregroundStyle(.primary)
                         .lineLimit(1)
 
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
                         // Thời gian tập
                         HStack(spacing: 3) {
                             Image(systemName: "clock.fill")
@@ -70,7 +70,7 @@ public struct ActiveWorkoutMiniBar: View {
                             Text(formattedTime)
                                 .font(.caption2.monospacedDigit().bold())
                         }
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(FFDesign.Colors.primaryNeon)
 
                         Text("•")
                             .font(.caption2)
@@ -85,22 +85,35 @@ public struct ActiveWorkoutMiniBar: View {
 
                 Spacer()
 
-                // Nút mở rộng fullscreen indicator
-                Image(systemName: "chevron.up.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(.blue)
+                // Nút mở rộng fullscreen với animation nhẹ
+                ZStack {
+                    Circle()
+                        .fill(FFDesign.Colors.primaryNeon.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "chevron.up")
+                        .font(.caption.bold())
+                        .foregroundStyle(FFDesign.Colors.primaryNeon)
+                }
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [FFDesign.Colors.primaryNeon.opacity(0.4), .clear],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.2
+                    )
             )
-            .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
+            .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 12)
-        .padding(.bottom, 4)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 6)
+        .ffPressable()
     }
 }

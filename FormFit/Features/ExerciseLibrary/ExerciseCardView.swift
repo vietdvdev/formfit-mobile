@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Component Card hiển thị thông tin tóm tắt của 1 bài tập trong thư viện
+/// Component Card hiển thị thông tin bài tập chuẩn thể thao công nghệ cao
+/// Hỗ trợ: Gradient icon thumbnail, 3D Badge phát sáng, Tag nhóm cơ màu sắc và tương tác Pressable
 public struct ExerciseCardView: View {
     public let exercise: ExerciseItem
 
@@ -10,12 +11,15 @@ public struct ExerciseCardView: View {
 
     public var body: some View {
         HStack(spacing: 14) {
-            // Thumbnail / Icon mô phỏng bài tập
+            // 1. Thumbnail / Icon bài tập với hiệu ứng gradient nổi bật
             ZStack {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: FFDesign.Radius.medium, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [Color.blue.opacity(0.12), Color.purple.opacity(0.08)],
+                            colors: [
+                                FFDesign.Colors.electricBlue.opacity(0.18),
+                                FFDesign.Colors.cyberPurple.opacity(0.12)
+                            ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -23,11 +27,17 @@ public struct ExerciseCardView: View {
                     .frame(width: 74, height: 74)
 
                 Image(systemName: exercise.thumbnailImageName)
-                    .font(.system(size: 30))
-                    .foregroundStyle(.blue)
+                    .font(.system(size: 28))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [FFDesign.Colors.electricBlue, FFDesign.Colors.cyberPurple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             }
 
-            // Thông tin chi tiết
+            // 2. Thông tin chi tiết
             VStack(alignment: .leading, spacing: 6) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(exercise.name)
@@ -41,20 +51,20 @@ public struct ExerciseCardView: View {
                         .lineLimit(1)
                 }
 
-                // Badges: Nhóm cơ chính & Dụng cụ tập
+                // 3. Badges: Nhóm cơ chính & Dụng cụ & 3D Tag
                 HStack(spacing: 6) {
                     // Badge Nhóm cơ
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(Color.orange)
+                            .fill(FFDesign.Colors.vibrantOrange)
                             .frame(width: 6, height: 6)
                         Text(exercise.primaryMuscle.rawValue)
                             .font(.caption2.bold())
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.orange.opacity(0.12), in: Capsule())
-                    .foregroundStyle(.orange)
+                    .background(FFDesign.Colors.vibrantOrange.opacity(0.14), in: Capsule())
+                    .foregroundStyle(FFDesign.Colors.vibrantOrange)
 
                     // Badge Dụng cụ
                     HStack(spacing: 4) {
@@ -70,20 +80,28 @@ public struct ExerciseCardView: View {
 
                     Spacer()
 
-                    // Icon 3D Indicator
-                    Image(systemName: "cube.transparent")
-                        .font(.caption)
-                        .foregroundStyle(.blue.opacity(0.8))
+                    // Icon 3D Indicator phát sáng
+                    HStack(spacing: 3) {
+                        Image(systemName: "cube.transparent.fill")
+                            .font(.system(size: 10))
+                        Text("3D")
+                            .font(.system(size: 9, weight: .black))
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(FFDesign.Colors.electricBlue.opacity(0.12), in: Capsule())
+                    .foregroundStyle(FFDesign.Colors.electricBlue)
                 }
             }
 
             Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
+                .font(.footnote.weight(.bold))
                 .foregroundStyle(.tertiary)
         }
         .padding(14)
-        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
-        .contentShape(RoundedRectangle(cornerRadius: 18))
-        .shadow(color: .black.opacity(0.03), radius: 8, x: 0, y: 3)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: FFDesign.Radius.medium, style: .continuous))
+        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 3)
+        .ffPressable()
     }
 }

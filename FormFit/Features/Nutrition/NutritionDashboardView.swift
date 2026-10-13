@@ -113,7 +113,7 @@ public struct NutritionDashboardView: View {
                     title: "Protein (Đạm)",
                     current: viewModel.dailyLog.totalProtein,
                     target: viewModel.macroTarget.proteinGrams,
-                    color: .red,
+                    color: FFDesign.Colors.sunsetPink,
                     ratio: viewModel.proteinProgressRatio
                 )
 
@@ -121,7 +121,7 @@ public struct NutritionDashboardView: View {
                     title: "Carbs (Tinh bột)",
                     current: viewModel.dailyLog.totalCarbs,
                     target: viewModel.macroTarget.carbsGrams,
-                    color: .blue,
+                    color: FFDesign.Colors.electricBlue,
                     ratio: viewModel.carbsProgressRatio
                 )
 
@@ -129,14 +129,13 @@ public struct NutritionDashboardView: View {
                     title: "Fat (Chất béo)",
                     current: viewModel.dailyLog.totalFat,
                     target: viewModel.macroTarget.fatGrams,
-                    color: .yellow,
+                    color: FFDesign.Colors.energyYellow,
                     ratio: viewModel.fatProgressRatio
                 )
             }
         }
         .padding(20)
-        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 22))
-        .shadow(color: .black.opacity(0.03), radius: 8, x: 0, y: 3)
+        .ffGlassCard()
     }
 
     private func macroProgressBar(
