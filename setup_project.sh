@@ -15,6 +15,8 @@ else
     rm -f xcodegen.zip
     
     echo "⚙ Đang tạo file FormFit.xcodeproj..."
+    chmod +x .xcodegen_temp/bin/xcodegen 2>/dev/null || true
+    xattr -cr .xcodegen_temp 2>/dev/null || true
     ./.xcodegen_temp/bin/xcodegen generate
     echo "✓ Đã tạo thành công FormFit.xcodeproj!"
 fi
